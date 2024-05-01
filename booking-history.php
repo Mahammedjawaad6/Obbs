@@ -11,7 +11,7 @@ if (strlen($_SESSION['obbsuid']==0)) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Online Banquet Booking System|| View Booking </title>
+<title>Online Banquet Booking System|| Booking History </title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- bootstrap-css -->
@@ -47,7 +47,7 @@ if (strlen($_SESSION['obbsuid']==0)) {
 		<div class="agileinfo-dot">
 		<?php include_once('includes/header.php');?>
 			<div class="wthree-heading">
-				<h2>View Booking</h2>
+				<h2>Booking Histor</h2>
 			</div>
 		</div>
 	</div>
@@ -58,14 +58,26 @@ if (strlen($_SESSION['obbsuid']==0)) {
 		<div class="container">
 			<div class="wthree-services-bottom-grids">
 				
-				<p class="wow fadeInUp animated" data-wow-delay=".5s">View Your Booking Details.</p>
+				<p class="wow fadeInUp animated" data-wow-delay=".5s">List of booking.</p>
 					<div class="bs-docs-example wow fadeInUp animated" data-wow-delay=".5s">
-						 <?php
-                  $uid=$_SESSION['obbsuid'];
-
-$sql="SELECT tbluser.FullName,tbluser.MobileNumber,tbluser.Email,tblbooking.BookingID,tblbooking.BookingDate,tblbooking.BookingFrom,tblbooking.BookingTo,tblbooking.EventType,tblbooking.Numberofguest,tblbooking.Message, tblbooking.Remark,tblbooking.Status,tblbooking.UpdationDate,tblservice.ServiceName,tblservice.SerDes,tblservice.ServicePrice,Remark from tblbooking join tblservice on tblbooking.ServiceID=tblservice.ID join tbluser on tbluser.ID=tblbooking.UserID  where tblbooking.UserID=:uid";
+						<table class="table table-bordered table-striped table-vcenter js-dataTable-full-pagination">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"></th>
+                                        <th>Booking ID</th>
+                                        <th class="d-none d-sm-table-cell">Cutomer Name</th>
+                                        <th class="d-none d-sm-table-cell">Mobile Number</th>
+                                        <th class="d-none d-sm-table-cell">Email</th>
+                                        <th class="d-none d-sm-table-cell">Booking Date</th>
+                                        <th class="d-none d-sm-table-cell">Status</th>
+                                        <th class="d-none d-sm-table-cell" style="width: 15%;">Action</th>
+                                       </tr>
+                                </thead>
+                                <tbody>
+<?php
+$uid=$_SESSION['obbsuid'];
+$sql="SELECT tbluser.FullName,tbluser.MobileNumber,tbluser.Email,tblbooking.BookingID,tblbooking.BookingDate,tblbooking.Status,tblbooking.ID from tblbooking join tbluser on tbluser.ID=tblbooking.UserID where tblbooking.UserID='$uid'";
 $query = $dbh -> prepare($sql);
-$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 
@@ -74,93 +86,31 @@ if($query->rowCount() > 0)
 {
 foreach($results as $row)
 {               ?>
-                            <table border="1" class="table table-bordered table-striped table-vcenter js-dataTable-full-pagination">
-                                <tr>
-                                    <th colspan="5" style="text-align: center;font-size: 20px;color: blue;">Booking Number: <?php  echo $row->BookingID;?>
-                                        
-                                    </th>
-                                </tr>
-                                            <tr>
-    <th>Client Name</th>
-    <td><?php  echo $row->FullName;?></td>
-     <th>Mobile Number</th>
-    <td><?php  echo $row->MobileNumber;?></td>
-  </tr>
-  
+                                    <tr>
+                                        <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                        <td class="font-w600"><?php  echo htmlentities($row->BookingID);?></td>
+                                        <td class="font-w600"><?php  echo htmlentities($row->FullName);?></td>
+                                        <td class="font-w600"><?php  echo htmlentities($row->MobileNumber);?></td>
+                                        <td class="font-w600"><?php  echo htmlentities($row->Email);?></td>
+                                        <td class="font-w600">
+                                            <span class="badge badge-primary"><?php  echo htmlentities($row->BookingDate);?></span>
+                                        </td>
+                                        <?php if($row->Status==""){ ?>
 
-  <tr>
-    
-   <th>Email</th>
-    <td><?php  echo $row->Email;?></td>
-     <th>Booking From</th>
-    <td><?php  echo $row->BookingFrom;?></td>
-  </tr>
-
-   <tr>
-   <th>Booking To</th>
-    <td><?php  echo $row->BookingTo;?></td>
-    <th>Number of Guest</th>
-    <td><?php  echo $row->Numberofguest;?></td>
-  </tr>
- 
-  <tr>
-    
-    <th>Event Type</th>
-    <td><?php  echo $row->EventType;?></td>
-    <th>Message</th>
-    <td><?php  echo $row->Message;?></td>
-  </tr>
-  <tr>
-    
-    <th>Service Name</th>
-    <td><?php  echo $row->ServiceName;?></td>
-    <th>Service Description</th>
-    <td><?php  echo $row->SerDes;?></td>
-  </tr>
-   <tr>
-    <th>Service Price</th>
-    <td>$<?php  echo $row->ServicePrice;?></td>
-    <th>Apply Date</th>
-    <td><?php  echo $row->BookingDate;?></td>
-  </tr>
-
-  <tr>
-    
-     <th>Order Final Status</th>
-
-    <td> <?php  $status=$row->Status;
-    
-if($row->Status=="Approved")
-{
-  echo "Approved";
-}
-
-if($row->Status=="Cancelled")
-{
- echo "Cancelled";
-}
-
-
-if($row->Status=="")
-{
-  echo "Not Response Yet";
-}
-
-
-     ;?></td>
-     <th >Admin Remark</th>
-    <?php if($row->Status==""){ ?>
-
-                     <td><?php echo "Not Updated Yet"; ?></td>
-<?php } else { ?>                  <td><?php  echo htmlentities($row->Remark);?>
-                  </td>
-                  <?php } ?>
-  </tr>
-  
- 
-<?php $cnt=$cnt+1;}} ?>
-
-</table> 
+                     <td class="font-w600"><?php echo "Not Updated Yet"; ?></td>
+<?php } else { ?>
+                                        <td class="d-none d-sm-table-cell">
+                                            <span class="badge badge-primary"><?php  echo htmlentities($row->Status);?></span>
+                                        </td>
+<?php } ?> 
+                                         <td class="d-none d-sm-table-cell"><a href="view-booking-detail.php?editid=<?php echo htmlentities ($row->ID);?>&&bookingid=<?php echo htmlentities ($row->BookingID);?>"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
+                                    </tr>
+                                    <?php $cnt=$cnt+1;}} ?> 
+                                
+                                
+                                  
+                                </tbody>
+                            </table>
 					</div>
 				<div class="clearfix"> </div>
 			</div>

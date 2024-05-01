@@ -6,39 +6,29 @@ if (strlen($_SESSION['obbsuid']==0)) {
   header('location:logout.php');
   } else{
     if(isset($_POST['submit']))
-{
-$uid=$_SESSION['obbsuid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$sql ="SELECT ID FROM tbluser WHERE ID=:uid and Password=:cpassword";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
-$query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
+  {
+    $uid=$_SESSION['obbsuid'];
+    $AName=$_POST['fname'];
+    $mobno=$_POST['mobno']; 
+ 
+  $sql="update tbluser set FullName=:name,MobileNumber=:mobno where ID=:uid";
+     $query = $dbh->prepare($sql);
+     $query->bindParam(':name',$AName,PDO::PARAM_STR);
+     $query->bindParam(':mobno',$mobno,PDO::PARAM_STR);
+     $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+$query->execute();
 
-if($query -> rowCount() > 0)
-{
-$con="update tbluser set Password=:newpassword where ID=:uid";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
+        echo '<script>alert("Profile has been updated")</script>';
+echo "<script>window.location.href ='profile.php'</script>";
 
-echo '<script>alert("Your password successully changed")</script>';
-} else {
-echo '<script>alert("Your current password is wrong")</script>';
+     
 
-}
-
-
-
-}
+  }
   ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Online Banquet Booking System | Change Password</title>
+<title>Online Banquet Booking System | User Profile</title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- bootstrap-css -->
@@ -65,19 +55,7 @@ echo '<script>alert("Your current password is wrong")</script>';
 	});
 </script> 
 
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-}   
 
-</script>
 </head>
 <body>
 	<!-- banner -->
@@ -85,7 +63,7 @@ return true;
 		<div class="agileinfo-dot">
 			<?php include_once('includes/header.php');?>
 			<div class="wthree-heading">
-				<h2>Change Password</h2>
+				<h2>Profile</h2>
 			</div>
 		</div>
 	</div>
@@ -100,30 +78,45 @@ return true;
 						<h3>User Profile </h3>
 					</div>
 					<div class="agileinfo-contact-form-grid">
-						<form method="post" onsubmit="return checkpass();" name="changepassword">
-							 <div class="form-group row">
-                                    <label class="col-form-label col-md-4">Current Password</label>
-                                    <div class="col-md-10">
-                                        <input type="password" class="form-control" style="font-size: 20px" required="true" name="currentpassword">
-                                    </div>
-                                </div>
+						<form method="post">
+							 <?php
+$uid=$_SESSION['obbsuid'];
+$sql="SELECT * from  tbluser where ID=:uid";
+$query = $dbh -> prepare($sql);
+$query->bindParam(':uid',$uid,PDO::PARAM_STR);
+$query->execute();
+$results=$query->fetchAll(PDO::FETCH_OBJ);
+$cnt=1;
+if($query->rowCount() > 0)
+{
+foreach($results as $row)
+{               ?><div class="form-group row">
+                                                <label class="col-form-label col-md-4">Full Name:</label>
+                                    <div class="col-md-12">
+                                        <input type="text" value="<?php  echo $row->FullName;?>" name="fname" required="true" class="form-control" >
+                                    </div></div>
                                                 <div class="form-group row">
-                                    <label class="col-form-label col-md-4">New Password</label>
-                                    <div class="col-md-10">
-                                        <input type="password" class="form-control"  required="true" name="newpassword" style="font-size: 20px">
+                                    <label class="col-form-label col-md-4">Mobile Number</label>
+                                    <div class="col-md-12">
+                                        <input type="text" name="mobno" class="form-control" required="true" maxlength="10" pattern="[0-9]+" value="<?php  echo $row->MobileNumber;?>">
                                     </div>
                                 </div>
                                                  <div class="form-group row">
-                                    <label class="col-form-label col-md-4">Confirm Password</label>
-                                    <div class="col-md-10">
-                                        <input type="password" class="form-control"  required="true" name="confirmpassword" style="font-size: 20px" >
+                                    <label class="col-form-label col-md-4">Email Address</label>
+                                    <div class="col-md-12">
+                                        <input type="email" class="form-control" value="<?php  echo $row->Email;?>" name="email" required="true" readonly title="Email can't be edit">
                                     </div>
                                 </div>
-                                                
+                                                <div class="form-group row">
+                                    <label class="col-form-label col-md-4">Registration Date</label>
+                                    <div class="col-md-12">
+                                        <input type="text" value="<?php  echo $row->RegDate;?>" class="form-control" name="password" readonly="true">
+                                    </div>
+                                </div><?php $cnt=$cnt+1;}} ?>
                                               <br>
                                                 <div class="tp">
                                                     
-                                                     <button type="submit" class="btn btn-primary" name="submit">Change</button>
+                                                     <button type="submit" class="btn btn-primary" name="submit">Update</button>
                                                 </div>
                                             </form>
 

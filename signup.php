@@ -1,44 +1,50 @@
 <?php
+include('includes/dbconnection.php');
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
-if (strlen($_SESSION['obbsuid']==0)) {
-  header('location:logout.php');
-  } else{
-    if(isset($_POST['submit']))
+if(isset($_POST['signup']))
+  {
+    $fname=$_POST['fname'];
+    $mobno=$_POST['mobno'];
+    $email=$_POST['email'];
+    $password=md5($_POST['password']);
+    $ret="select Email from tbluser where Email=:email";
+    $query= $dbh -> prepare($ret);
+    $query-> bindParam(':email', $email, PDO::PARAM_STR);
+    $query-> execute();
+    $results = $query -> fetchAll(PDO::FETCH_OBJ);
+if($query -> rowCount() == 0)
 {
-$uid=$_SESSION['obbsuid'];
-$cpassword=md5($_POST['currentpassword']);
-$newpassword=md5($_POST['newpassword']);
-$sql ="SELECT ID FROM tbluser WHERE ID=:uid and Password=:cpassword";
-$query= $dbh -> prepare($sql);
-$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
-$query-> execute();
-$results = $query -> fetchAll(PDO::FETCH_OBJ);
-
-if($query -> rowCount() > 0)
+$sql="Insert Into tbluser(FullName,MobileNumber,Email,Password)Values(:fname,:mobno,:email,:password)";
+$query = $dbh->prepare($sql);
+$query->bindParam(':fname',$fname,PDO::PARAM_STR);
+$query->bindParam(':email',$email,PDO::PARAM_STR);
+$query->bindParam(':mobno',$mobno,PDO::PARAM_INT);
+$query->bindParam(':password',$password,PDO::PARAM_STR);
+$query->execute();
+$lastInsertId = $dbh->lastInsertId();
+if($lastInsertId)
 {
-$con="update tbluser set Password=:newpassword where ID=:uid";
-$chngpwd1 = $dbh->prepare($con);
-$chngpwd1-> bindParam(':uid', $uid, PDO::PARAM_STR);
-$chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-$chngpwd1->execute();
 
-echo '<script>alert("Your password successully changed")</script>';
-} else {
-echo '<script>alert("Your current password is wrong")</script>';
-
+echo "<script>alert('You have signup  Scuccessfully');</script>";
 }
+else
+{
 
-
-
+echo "<script>alert('Something went wrong.Please try again');</script>";
 }
-  ?>
+}
+ else
+{
+
+echo "<script>alert('Email-id already exist. Please try again');</script>";
+}
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Online Banquet Booking System | Change Password</title>
+<title>Online Banquet Booking System | Mail</title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- bootstrap-css -->
@@ -64,14 +70,16 @@ echo '<script>alert("Your current password is wrong")</script>';
 		});
 	});
 </script> 
-
-<script type="text/javascript">
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+	<script type="text/javascript">
 function checkpass()
 {
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
+if(document.signup.password.value!=document.signup.confirmpassword.value)
 {
 alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
+document.signup.confirmpassword.focus();
 return false;
 }
 return true;
@@ -85,7 +93,7 @@ return true;
 		<div class="agileinfo-dot">
 			<?php include_once('includes/header.php');?>
 			<div class="wthree-heading">
-				<h2>Change Password</h2>
+				<h2>Register</h2>
 			</div>
 		</div>
 	</div>
@@ -94,42 +102,40 @@ return true;
 	<div class="contact">
 		<div class="container">
 			<div class="agile-contact-form">
+				<div class="col-md-6 contact-form-left">
 				
+					<div class="agileits-contact-address">
+				<img src="images/5.jpg" alt="" height="500" width="500">
+					</div>
+				</div>
 				<div class="col-md-6 contact-form-right">
 					<div class="contact-form-top">
-						<h3>User Profile </h3>
+						<h3>Register Yourself </h3>
 					</div>
 					<div class="agileinfo-contact-form-grid">
-						<form method="post" onsubmit="return checkpass();" name="changepassword">
-							 <div class="form-group row">
-                                    <label class="col-form-label col-md-4">Current Password</label>
-                                    <div class="col-md-10">
-                                        <input type="password" class="form-control" style="font-size: 20px" required="true" name="currentpassword">
-                                    </div>
-                                </div>
-                                                <div class="form-group row">
-                                    <label class="col-form-label col-md-4">New Password</label>
-                                    <div class="col-md-10">
-                                        <input type="password" class="form-control"  required="true" name="newpassword" style="font-size: 20px">
-                                    </div>
-                                </div>
-                                                 <div class="form-group row">
-                                    <label class="col-form-label col-md-4">Confirm Password</label>
-                                    <div class="col-md-10">
-                                        <input type="password" class="form-control"  required="true" name="confirmpassword" style="font-size: 20px" >
-                                    </div>
-                                </div>
-                                                
+						<form method="post" name="signup" onsubmit="return checkpass();">
+                                                <input type="text" name="fname" placeholder="Full Name" required="true">
+                                                <input type="email" name="email" placeholder="E-mail" required="true">
+                                                <input type="text" name="mobno" placeholder="Mobile Number" required="true" maxlength="10" pattern="[0-9]+">
+                                                <input type="password"  name="password" placeholder="Password" required="true" id="password1">
+                                                <br>
+                                                <input type="password"  name="confirmpassword" placeholder="Confirm Password" required="true" id="password2">
                                               <br>
                                                 <div class="tp">
                                                     
-                                                     <button type="submit" class="btn btn-primary" name="submit">Change</button>
+                                                    <button class="btn1" name="signup">Register NOW</button>
                                                 </div>
                                             </form>
 
 					</div>
 				</div>
-				
+				<br>
+				<div class="col-md-6 contact-form-right">
+					 <div class="forgot">
+                                                            <a href="login.php">Already have an account!!!</a>
+                                                        </div>
+					
+				</div>
 				<div class="clearfix"> </div>
 			</div>
 			
@@ -173,4 +179,4 @@ return true;
 <script src="js/modernizr.custom.js"></script>
 
 </body>	
-</html><?php }  ?>
+</html>

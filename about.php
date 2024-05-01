@@ -1,33 +1,13 @@
 <?php
-include('includes/dbconnection.php');
 session_start();
 error_reporting(0);
-if(isset($_POST['login'])) 
-  {
-    $email=$_POST['email'];
-    $password=md5($_POST['password']);
-    $sql ="SELECT ID FROM tbluser WHERE Email=:email and Password=:password";
-    $query=$dbh->prepare($sql);
-    $query->bindParam(':email',$email,PDO::PARAM_STR);
-$query-> bindParam(':password', $password, PDO::PARAM_STR);
-    $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() > 0)
-{
-foreach ($results as $result) {
-$_SESSION['obbsuid']=$result->ID;
-}
-$_SESSION['login']=$_POST['email'];
-echo "<script type='text/javascript'> document.location ='index.php'; </script>";
-} else{
-echo "<script>alert('Invalid Details');</script>";
-}
-}
+
+include('includes/dbconnection.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Online Banquet Booking System | Login</title>
+<title>Online Banquet Booking System|| About </title>
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- bootstrap-css -->
@@ -61,56 +41,48 @@ echo "<script>alert('Invalid Details');</script>";
 	<!-- banner -->
 	<div class="banner jarallax">
 		<div class="agileinfo-dot">
-			<?php include_once('includes/header.php');?>
+		<?php include_once('includes/header.php');?>
 			<div class="wthree-heading">
-				<h2>Login</h2>
+				<h2>About Us</h2>
 			</div>
 		</div>
 	</div>
 	<!-- //banner -->
-	<!-- contact -->
-	<div class="contact">
+	<!-- about -->
+	<!-- about-top -->
+	<div class="about-top">
 		<div class="container">
-			<div class="agile-contact-form">
-				<div class="col-md-6 contact-form-left">
-				
-					<div class="agileits-contact-address">
-				<img src="images/5.jpg" alt="" height="500" width="500">
-					</div>
+			<div class="wthree-services-bottom-grids">
+				<div class="col-md-6 wthree-services-left">
+					<img src="images/5.jpg" alt="">
 				</div>
-				<div class="col-md-6 contact-form-right">
-					<div class="contact-form-top">
-						<h3>Login to User Panel</h3>
-					</div>
-					<div class="agileinfo-contact-form-grid">
-						<form action="#" method="post" name="login">
-							<input type="email" name="email" placeholder="E-mail" required="true">
-							<input type="password" name="password" placeholder="Password"  required="true">
-							<br>
-							<div class="forgot">
-                                                            <a href="forgot-password.php">Forgot Password?</a>
-                                                        </div>
-                                                        <br>
-							<button class="btn1" name="login">LOGIN NOW</button>
+				<div class="col-md-6 wthree-services-right">
+					<div class="wthree-services-right-top">
+						 <?php
+$sql="SELECT * from tblpage where PageType='aboutus'";
+$query = $dbh -> prepare($sql);
+$query->execute();
+$results=$query->fetchAll(PDO::FETCH_OBJ);
 
-						</form>
-
+$cnt=1;
+if($query->rowCount() > 0)
+{
+foreach($results as $row)
+{               ?>
+						<h4><?php  echo htmlentities($row->PageTitle);?></h4>
+						<p><?php  echo $row->PageDescription;?></p><?php $cnt=$cnt+1;}} ?>
 					</div>
-				</div>
-				<br>
-				<div class="col-md-6 contact-form-right">
-					 <div class="forgot">
-                                                            <a href="signup.php">Register Yourself</a>
-                                                        </div>
 					
+					<div class="clearfix"> </div>
 				</div>
 				<div class="clearfix"> </div>
 			</div>
-			
-		
 		</div>
 	</div>
-	<!-- //contact -->
+	<!-- //about-top -->
+	
+	<!-- //about -->
+	<!-- footer -->
 	<?php include_once('includes/footer.php');?>
 	<!-- jarallax -->
 	<script src="js/jarallax.js"></script>

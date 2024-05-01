@@ -8,7 +8,7 @@ if(isset($_POST['submit']))
     $email=$_POST['email'];
 $mobile=$_POST['mobile'];
 $newpassword=md5($_POST['newpassword']);
-  $sql ="SELECT Email FROM tbladmin WHERE Email=:email and MobileNumber=:mobile";
+  $sql ="SELECT Email FROM tbluser WHERE Email=:email and MobileNumber=:mobile";
 $query= $dbh -> prepare($sql);
 $query-> bindParam(':email', $email, PDO::PARAM_STR);
 $query-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
@@ -16,7 +16,7 @@ $query-> execute();
 $results = $query -> fetchAll(PDO::FETCH_OBJ);
 if($query -> rowCount() > 0)
 {
-$con="update tbladmin set Password=:newpassword where Email=:email and MobileNumber=:mobile";
+$con="update tbluser set Password=:newpassword where Email=:email and MobileNumber=:mobile";
 $chngpwd1 = $dbh->prepare($con);
 $chngpwd1-> bindParam(':email', $email, PDO::PARAM_STR);
 $chngpwd1-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
@@ -30,13 +30,39 @@ echo "<script>alert('Email id or Mobile no is invalid');</script>";
 }
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Online Banquet Booking System | Forgot Password</title>
 
-<!doctype html>
-<html lang="en" class="no-focus"> <!--<![endif]-->
-    <head>       
-        <title>Onlind Banquet Booking System - Forgot Page</title>
-        <link rel="stylesheet" id="css-main" href="assets/css/codebase.min.css">
-        <script type="text/javascript">
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- bootstrap-css -->
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+<!--// bootstrap-css -->
+<!-- css -->
+<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+<!--// css -->
+<!-- font-awesome icons -->
+<link href="css/font-awesome.css" rel="stylesheet"> 
+<!-- //font-awesome icons -->
+<!-- font -->
+<link href="//fonts.googleapis.com/css?family=Josefin+Sans:100,100i,300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+<link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300' rel='stylesheet' type='text/css'>
+<!-- //font -->
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $(".scroll").click(function(event){     
+            event.preventDefault();
+            $('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
+        });
+    });
+</script> 
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+    <script type="text/javascript">
 function valid()
 {
 if(document.chngpwd.newpassword.value!= document.chngpwd.confirmpassword.value)
@@ -48,109 +74,92 @@ return false;
 return true;
 }
 </script>
-    </head>
-    <body>
-      
-        <div id="page-container" class="main-content-boxed">
-            <!-- Main Container -->
-            <main id="main-container">
-                <!-- Page Content -->
-                <div class="bg-image" style="background-image: url('assets/img/photos/photo34@2x.jpg');">
-                    <div class="row mx-0 bg-black-op">
-                        <div class="hero-static col-md-6 col-xl-8 d-none d-md-flex align-items-md-end">
-                            <div class="p-30 invisible" data-toggle="appear">
-                                <p class="font-size-h3 font-w600 text-white">
-                                    Online Banquet Booking System.
-                                </p>
-                                <p class="font-italic text-white-op">
-                                    Copyright &copy; <span class="js-year-copy">2020</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="hero-static col-md-6 col-xl-4 d-flex align-items-center bg-white invisible" data-toggle="appear" data-class="animated fadeInRight">
-                            <div class="content content-full">
-                                <!-- Header -->
-                                <div class="px-30 py-10">
-                                    <a class="link-effect font-w700" href="login.php">
-                                        <i class="si si-fire"></i>
-                                        <span class="font-size-xl">OBBS</span>
-                                    </a>
-                                    <h1 class="h3 font-w700 mt-30 mb-10">Don’t worry, we’ve got your back</h1>
-                                    <h2 class="h5 font-w400 text-muted mb-0">Please enter below detail</h2>
-                                </div>
-                               
-                                <form class="js-validation-signin px-30" method="post" name="chngpwd" onSubmit="return valid();">
-                                    <div class="form-group row">
-                                        <div class="col-12">
-                                            <div class="form-material floating">
-                                                <input type="email" class="form-control" required="true" name="email">
-                                                <label for="login-username">Email Address</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-12">
-                                            <div class="form-material floating">
-                                                <input type="text" class="form-control"  name="mobile" required="true" maxlength="10" pattern="[0-9]+">
-                                                <label for="login-password">Mobile Number</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-12">
-                                            <div class="form-material floating">
-                                                <input class="form-control" type="password" name="newpassword" required="true"/>
-                                                <label for="login-password">New Password</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-12">
-                                            <div class="form-material floating">
-                                                <input class="form-control" type="password" name="confirmpassword" required="true"/>
-                                                <label for="login-password">Confirm Password</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-sm btn-hero btn-alt-primary" name="submit">
-                                            <i class="si si-login mr-10"></i> Reset
-                                        </button>
-                                        <div class="mt-30">
-                                            
-                                            <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="login.php">
-                                                 <i class="fa fa-user text-muted mr-5"></i> Sign In
-                                            </a>
-                                        </div>
-                                    </div>
-                                </form>
-                                <!-- END Sign In Form -->
-                            </div>
-                        </div>
+</head>
+<body>
+    <!-- banner -->
+    <div class="banner jarallax">
+        <div class="agileinfo-dot">
+            <?php include_once('includes/header.php');?>
+            <div class="wthree-heading">
+                <h2>Forgot Password</h2>
+            </div>
+        </div>
+    </div>
+    <!-- //banner -->
+    <!-- contact -->
+    <div class="contact">
+        <div class="container">
+            <div class="agile-contact-form">
+                <div class="col-md-6 contact-form-left">
+                
+                    <div class="agileits-contact-address">
+                <img src="images/5.jpg" alt="" height="500" width="500">
                     </div>
                 </div>
-                <!-- END Page Content -->
-            </main>
-            <!-- END Main Container -->
+                <div class="col-md-6 contact-form-right">
+                    <div class="contact-form-top">
+                        <h3>Reset Your Password</h3>
+                    </div>
+                    <div class="agileinfo-contact-form-grid">
+                        <form action="#" method="post" name="chngpwd" onSubmit="return valid();">
+                            <input type="email" class="form-control" name="email" placeholder="E-mail" required="true">
+                            <input type="text" class="form-control" required="true" name="mobile" maxlength="10" pattern="[0-9]+" placeholder="Mobile Number">
+                            <input type="password"class="form-control"  name="newpassword" placeholder="New Password" required="true"/>
+                            <br>
+                            <input type="password" name="confirmpassword" placeholder="Confirm Password" class="form-control" required="true" />
+                            <br>
+                            <div class="forgot">
+                                                            <a href="login.php">Already have an account</a>
+                                                        </div>
+                                                        <br>
+                            <button class="btn1" name="submit">Reset</button>
+
+                        </form>
+
+                    </div>
+                </div>
+                
+                <div class="clearfix"> </div>
+            </div>
+            
+        
         </div>
-        <!-- END Page Container -->
+    </div>
+    <!-- //contact -->
+    <?php include_once('includes/footer.php');?>
+    <!-- jarallax -->
+    <script src="js/jarallax.js"></script>
+    <script src="js/SmoothScroll.min.js"></script>
+    <script type="text/javascript">
+        /* init Jarallax */
+        $('.jarallax').jarallax({
+            speed: 0.5,
+            imgWidth: 1366,
+            imgHeight: 768
+        })
+    </script>
+    <!-- //jarallax -->
+    <script src="js/SmoothScroll.min.js"></script>
+    <script type="text/javascript" src="js/move-top.js"></script>
+    <script type="text/javascript" src="js/easing.js"></script>
+    <!-- here stars scrolling icon -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /*
+                var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear' 
+                };
+            */
+                                
+            $().UItoTop({ easingType: 'easeOutQuart' });
+                                
+            });
+    </script>
+<!-- //here ends scrolling icon -->
+<script src="js/modernizr.custom.js"></script>
 
-        <!-- Codebase Core JS -->
-        <script src="assets/js/core/jquery.min.js"></script>
-        <script src="assets/js/core/popper.min.js"></script>
-        <script src="assets/js/core/bootstrap.min.js"></script>
-        <script src="assets/js/core/jquery.slimscroll.min.js"></script>
-        <script src="assets/js/core/jquery.scrollLock.min.js"></script>
-        <script src="assets/js/core/jquery.appear.min.js"></script>
-        <script src="assets/js/core/jquery.countTo.min.js"></script>
-        <script src="assets/js/core/js.cookie.min.js"></script>
-        <script src="assets/js/codebase.js"></script>
-
-        <!-- Page JS Plugins -->
-        <script src="assets/js/plugins/jquery-validation/jquery.validate.min.js"></script>
-
-        <!-- Page JS Code -->
-        <script src="assets/js/pages/op_auth_signin.js"></script>
-    </body>
+</body> 
 </html>
